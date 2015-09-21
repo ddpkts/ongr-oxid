@@ -1,0 +1,7 @@
+{% for category in categories %}
+    {% if category.expanded or category.id == selected_category %}
+        <li>
+            <a href="{{ url("ongr_category", {'document' : category}) }}">{{ category.title }}</a>
+        </li>
+    {% endif %}
+{% endfor %}

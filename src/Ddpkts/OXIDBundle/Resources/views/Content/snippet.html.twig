@@ -1,0 +1,4 @@
+{% if document is not empty %}
+    <h1>{{ document.title }}</h1>
+    {{ include(template_from_string(document.content)) }}
+{% endif %}

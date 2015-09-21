@@ -1,0 +1,2 @@
+ddpkts_oxid:
+    resource: @DdpktsOXIDBundle/Resources/config/routing.yml

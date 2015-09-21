@@ -1,0 +1,19 @@
+{% extends "DdpktsOXIDBundle:Product:list.html.twig" %}
+
+{% if filter_manager.filters.search is defined %}
+    {% set search = filter_manager.filters.search %}
+
+    {% block list_title %}
+        {% if search.state.value is not empty %}
+            {{ 'Results for "%term%"'|trans({ '%term%': search.state.value }) }}
+        {% else %}
+            {{ 'Search results'|trans }}
+        {% endif %}
+    {% endblock %}
+
+    {% block search_value %}{{ search.state.value }}{% endblock %}
+{% endif %}
+
+{% block page_route %}ongr_search{% endblock %}
+{% block title %}{{ block('list_title') }}{% endblock %}
+{% block breadcrumb_inner %}<li>{{ 'Search'|trans }}</li>{% endblock %}

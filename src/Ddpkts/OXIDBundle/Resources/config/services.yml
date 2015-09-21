@@ -1,0 +1,115 @@
+parameters:
+    ongr_oxid.seo_finder_service.repository: DdpktsOXIDBundle:Seo
+    ddpkts_oxid.import.finish.class: ONGR\ConnectionsBundle\EventListener\ImportFinishEventListener
+
+    ddpkts_oxid.import.product.modifier.class: ONGR\OXIDConnectorBundle\Modifier\ProductModifier
+    ddpkts_oxid.import.category.modifier.class: ONGR\OXIDConnectorBundle\Modifier\CategoryModifier
+    ddpkts_oxid.import.content.modifier.class: ONGR\OXIDConnectorBundle\Modifier\ContentModifier
+
+    ddpkts_oxid.import.product.doctrine_entity_type: DdpktsOXIDBundle:Article
+    ddpkts_oxid.import.product.elastic_document_type: DdpktsOXIDBundle:Product
+
+    ddpkts_oxid.import.category.doctrine_entity_type: DdpktsOXIDBundle:Category
+    ddpkts_oxid.import.category.elastic_document_type: DdpktsOXIDBundle:Category
+
+    ddpkts_oxid.import.content.doctrine_entity_type: DdpktsOXIDBundle:Content
+    ddpkts_oxid.import.content.elastic_document_type: DdpktsOXIDBundle:Content
+
+services:
+    # Product
+    ddpkts_oxid.import.product.source:
+        class: %ongr_connections.import.source.class%
+        parent: ongr_connections.import.source
+        arguments:
+            - @doctrine.orm.default_entity_manager
+            - %ddpkts_oxid.import.product.doctrine_entity_type%
+            - @es.manager.default
+            - %ddpkts_oxid.import.product.elastic_document_type%
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.product.source, method: onSource }
+
+    ddpkts_oxid.import.product.modifier:
+        class: %ddpkts_oxid.import.product.modifier.class%
+        arguments: [ "@ongr_oxid.attr_to_doc_service" ]
+        calls:
+           - [ setLanguageId, [%ongr_oxid.language_id%] ]
+           - [ setSeoFinderService, [ @ongr_oxid.seo_finder_service ] ]
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.product.modify, method: onModify }
+
+    ddpkts_oxid.import.product.consumer:
+        class: %ongr_connections.import.consumer.class%
+        parent: ongr_connections.import.consumer
+        arguments:
+            - @es.manager.default
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.product.consume, method: onConsume }
+
+    # Category
+    ddpkts_oxid.import.category.source:
+        class: %ongr_connections.import.source.class%
+        parent: ongr_connections.import.source
+        arguments:
+            - @doctrine.orm.default_entity_manager
+            - %ddpkts_oxid.import.category.doctrine_entity_type%
+            - @es.manager.default
+            - %ddpkts_oxid.import.category.elastic_document_type%
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.category.source, method: onSource }
+
+    ddpkts_oxid.import.category.modifier:
+        class: %ddpkts_oxid.import.category.modifier.class%
+        arguments: [ "@ongr_oxid.attr_to_doc_service" ]
+        calls:
+           - [ setLanguageId, [%ongr_oxid.language_id%] ]
+           - [ setSeoFinderService, [ @ongr_oxid.seo_finder_service ] ]
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.category.modify, method: onModify }
+
+    ddpkts_oxid.import.category.consumer:
+        class: %ongr_connections.import.consumer.class%
+        parent: ongr_connections.import.consumer
+        arguments:
+            - @es.manager.default
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.category.consume, method: onConsume }
+
+    # Content
+    ddpkts_oxid.import.content.source:
+        class: %ongr_connections.import.source.class%
+        parent: ongr_connections.import.source
+        arguments:
+            - @doctrine.orm.default_entity_manager
+            - %ddpkts_oxid.import.content.doctrine_entity_type%
+            - @es.manager.default
+            - %ddpkts_oxid.import.content.elastic_document_type%
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.content.source, method: onSource }
+
+    ddpkts_oxid.import.content.modifier:
+        class: %ddpkts_oxid.import.content.modifier.class%
+        arguments: [ "@ongr_oxid.attr_to_doc_service" ]
+        calls:
+           - [ setLanguageId, [%ongr_oxid.language_id%] ]
+           - [ setSeoFinderService, [ @ongr_oxid.seo_finder_service ] ]
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.content.modify, method: onModify }
+
+    ddpkts_oxid.import.content.consumer:
+        class: %ongr_connections.import.consumer.class%
+        parent: ongr_connections.import.consumer
+        arguments:
+            - @es.manager.default
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.content.consume, method: onConsume }
+
+    # All
+    ddpkts_oxid.import.finish:
+        class: %ddpkts_oxid.import.finish.class%
+        parent: ongr_connections.import.finish
+        arguments:
+            - @es.manager.default
+        tags:
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.product.finish, method: onFinish }
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.category.finish, method: onFinish }
+            - { name: kernel.event_listener, event: ongr.pipeline.import.oxid.content.finish, method: onFinish }

@@ -1,0 +1,58 @@
+{% extends 'DdpktsOXIDBundle::layout.html.twig' %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block breadcrumb_inner %}
+    <li class="active">{{ product.title }}</li>
+{% endblock %}
+
+
+{% block content %}
+    {{ parent() }}
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-4">
+                <img alt="" src="http://lorempixel.com/360/360?title={{ product.title }}" />
+            </div>
+            <div class="col-md-8">
+                <h1>{{ product.title }}</h1>
+                <p>{{ product.description }}</p>
+
+                <ul>
+                    <li>Price: {% if product.oldPrice %}<s>{{ product.oldPrice }}</s>{% endif %} {{ product.price }} Eur</li>
+                    <li>SKU: {{ product.sku }}</li>
+                    <li>Manufacturer: {{ product.manufacturer }}</li>
+                </ul>
+
+                {% if product.stock %}
+                    In stock
+                {% else %}
+                    Out of stock
+                {% endif %}
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-md-12">
+                <ul id="myTab" class="nav nav-tabs nav_tabs">
+                    <li class="active"><a href="#description" data-toggle="tab">DESCRIPTION</a></li>
+                </ul>
+
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="service-one">
+                        {{ product.longDescription|raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block content_wrapper %}
+    {{ block('content') }}
+{% endblock %}

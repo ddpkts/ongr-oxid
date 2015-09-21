@@ -1,0 +1,10 @@
+{% extends 'DdpktsOXIDBundle::layout.html.twig' %}
+
+{% block content_wrapper %}
+    <div class="jumbotron">
+        {{ snippet('oxstartwelcome', 'DdpktsOXIDBundle:Content:snippet.html.twig') }}
+        <p>
+            <a role="button" href="{{ url('ongr_search') }}" class="btn btn-lg btn-primary">Search</a>
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.masterhead > .nav {
+    margin-top: 8px;
+    position: relative;
+    top: 40px;
+}

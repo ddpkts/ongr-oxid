@@ -1,0 +1,20 @@
+{% extends '::base.html.twig' %}
+
+{% block content_wrapper %}
+    <div class="row">
+        <div class="col-sm-3">
+            {% block sidebar %}
+            {% endblock %}
+        </div>
+        <div class="col-sm-9">
+            {% block content %}
+                {% block breadcrumb %}
+                    <ol class="breadcrumb">
+                        <li><a href="{{ url('ddpkts_oxid.home') }}">{{ 'Home'|trans }}</a></li>
+                        {% block breadcrumb_inner %}{% endblock %}
+                    </ol>
+                {% endblock %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'DdpktsOXIDBundle::layout.html.twig' %}
+
+{% set filters = filter_manager.filters %}
+{% block page_route %}ongr_category{% endblock %}
+{% set default_route_parameters = category is defined ? {'document': category|default} : {} %}
+{% block title %}{{ category.title }}{% endblock %}
+{% block breadcrumb_inner %}
+    {{ render(url('_ongr_category_tree', {theme : 'breadcrumb', maxLevel: 1, selectedCategory : category.id}), {strategy: 'ssi'}) }}
+{% endblock %}
+
+{% block sorting %}
+    {% if filters.sorting is defined %}
+        <div class="dropdown pull-right">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {% for choice in filters.sorting.choices %}
+                        {% if choice.active or ((not filters.sorting.state.active) and choice.default) %} {{ choice.label }}{% endif %}
+                    {% endfor %}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    {% for choice in filters.sorting.choices %}
+                        {% if choice.active != true %}
+                            <li>
+                                <a href="{{ url(block('page_route'), choice.getUrlParameters()|merge(default_route_parameters)) }}">{{ choice.label }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    {% if filters.range_search is defined and (filters.range_search.minBounds != null or filters.range_search.maxBounds != null) %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                price 1;99
+            </div>
+            <div class="panel-body">
+                <form method="get"
+                      action="{{ url(block('page_route'), filters.range_search.getUrlParameters()|merge(default_route_parameters)) }}">
+                    <input type="text" name="range">
+                    <button class="btn" type="submit">Filter</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if filters.manufacturer.choices %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Manufacturers
+            </div>
+            <div class="panel-body">
+                <div class="list-group">
+                    {% for choice in filters.manufacturer.choices %}
+                        <a class="list-group-item {% if choice.active == true %}active{% endif %}"
+                           href="{{ url(block('page_route'), choice.getUrlParameters()|merge(default_route_parameters)) }}">{{ choice.label }}
+                            <span class="badge">{{ choice.count }}</span></a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ parent() }}
+
+    {{ block('sorting') }}
+
+    {% block list_header %}
+        <h2>{% block list_title %}{{ category.title }}{% endblock %} <span class="label label-info">{{ filter_manager.getResult.totalCount }}</span></h2>
+    {% endblock %}
+
+    <hr/>
+
+    {% block product_list %}
+        <div class="row">
+        {% for product in filter_manager.result %}
+            {% set product_url = path('ongr_product', { 'document': product }) %}
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <a href="{{ product_url }}">
+                        <img alt="" src="http://lorempixel.com/320/240?title={{ product.title }}" />
+                    </a>
+
+                    <div class="caption">
+                        <h4><a href="{{ product_url }}">{{ product.title }}</a></h4>
+
+                        <p>{% if product.oldPrice %}<s>{{ product.oldPrice }} Eur</s>{% endif %} {{ product.price }} Eur</p>
+
+                        <p>{{ product.description }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endblock %}
+
+    {% if filters.list_pager is defined %}
+        <div class="pull-right">
+            {{ ongr_paginate(filters.list_pager.getPager(), block('page_route'), filters.list_pager.getUrlParameters()|merge(default_route_parameters)) }}
+        </div>
+    {% endif %}
+{% endblock %}

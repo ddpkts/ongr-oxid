@@ -1,0 +1,20 @@
+{% extends 'DdpktsOXIDBundle::layout.html.twig' %}
+
+{% block content_wrapper %}
+    <div class="row">
+        <div class="col-sm-12">
+            {{ block('content') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}{{ content.title }}{% endblock %}
+
+{% block breadcrumbs_inner %}
+    <li class="active">{{ content.title }}</li>
+{% endblock %}
+
+{% block content %}
+    {{ parent() }}
+    {{ include(template_from_string(content.content)) }}
+{% endblock %}
